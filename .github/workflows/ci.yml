@@ -40,6 +40,7 @@ jobs:
           ECR_REPOSITORY: app-migration-repo
           IMAGE_TAG: ${{ github.sha }}
         run: |
+          # BUG FIX 1: Added the trailing dot (.) as the Docker build context
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
@@ -49,6 +50,7 @@ jobs:
           ECR_REPOSITORY: app-migration-repo
           IMAGE_TAG: ${{ github.sha }}
         run: |
+          # BUG FIX 2: Path corrected to ../k8s/ because working-directory is ./app
           sed -i "s|image: .*|image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" ../k8s/deployment.yaml
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@github.com'
