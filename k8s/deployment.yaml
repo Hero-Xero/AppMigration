@@ -1,0 +1,87 @@
+# ─────────────────────────────────────────────────────────────
+# Deployment — Spring Boot Application
+# Managed by ArgoCD. Image tag is updated automatically by
+# the GitHub Actions CI pipeline on every push to main.
+# ─────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-migration
+  namespace: default
+  labels:
+    app: app-migration
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app-migration
+  template:
+    metadata:
+      labels:
+        app: app-migration
+    spec:
+      containers:
+        - name: app-migration
+          # This line is updated automatically by the CI pipeline (ci.yml)
+          image: placeholder/app-migration-repo:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_HOST
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_USER
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_PASS
+          livenessProbe:
+            httpGet:
+              path: /health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health/readiness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+---
+# ─────────────────────────────────────────────────────────────
+# Service — exposes the deployment inside the cluster
+# The Ingress (Member 3) will route external traffic to this.
+# ─────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-migration-service
+  namespace: default
+spec:
+  selector:
+    app: app-migration
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
