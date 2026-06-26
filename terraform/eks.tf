@@ -12,9 +12,11 @@ module "eks" {
     aws_subnet.public_2.id
   ]
 
+  cluster_endpoint_public_access = true
+
   eks_managed_node_groups = {
     default = {
-      instance_types = ["t3.medium"]
+      instance_types = ["t3.small"]
 
       min_size     = 2
       max_size     = 2
