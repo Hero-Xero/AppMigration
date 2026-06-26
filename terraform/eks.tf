@@ -4,7 +4,6 @@ module "eks" {
 
   cluster_name    = "app-migration"
   cluster_version = "1.31"
-
   vpc_id = aws_vpc.main.id
 
   subnet_ids = [
@@ -13,14 +12,14 @@ module "eks" {
   ]
 
   cluster_endpoint_public_access = true
-
+    
   eks_managed_node_groups = {
     default = {
       instance_types = ["t3.small"]
-
       min_size     = 2
       max_size     = 2
       desired_size = 2
+      vpc_security_group_ids = [aws_security_group.eks_nodes.id]  # The EKS module creates its own node SG by default so you need to tell it to attach your eks_nodes SG to the nodes. 
     }
   }
 }
