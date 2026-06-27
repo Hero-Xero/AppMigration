@@ -20,6 +20,6 @@ data:
         Name              cloudwatch_logs
         Match             *
         region            us-east-1
-        log_group_name    /eks/my-cluster/logs
+        log_group_name    /eks/app-migration/logs
         log_stream_prefix app-
         auto_create_group true
