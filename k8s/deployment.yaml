@@ -77,6 +77,8 @@ kind: Service
 metadata:
   name: app-migration-service
   namespace: default
+  labels:
+    app: app-migration  # I added this block so the ServiceMonitor finds it
 spec:
   selector:
     app: app-migration
