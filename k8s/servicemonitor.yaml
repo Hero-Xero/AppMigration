@@ -2,16 +2,13 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: app-migration-monitor
-  namespace: monitoring
+  namespace: default
   labels:
     release: prometheus
 spec:
   selector:
     matchLabels:
       app: app-migration
-  namespaceSelector:
-    matchNames:
-      - default
   endpoints:
     - port: http
       path: /metrics
