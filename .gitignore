@@ -39,3 +39,5 @@ terraform/terraform.tfstate.backup
 terraform/tfplan.binary
 terraform/plan_output.txt
 terraform/plan_errors.txt
+secret.yaml
+*.tfvars
