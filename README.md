@@ -63,10 +63,10 @@ terraform apply
 
 ### Members
 
-| Name |
-| --- |
-| Omar Ahmed Asaad |
-| Ahmed Mahmoud |
-| Ahmed Tarek |
-| Abanoup Alkees Bishoy |
-| Sohip Ali |
+| Name | Email |
+| --- | --- |
+| Omar Ahmed Asaad | om.ahm4010069@intrast.com.eg |
+| Ahmed Mahmoud | ah.mah4010161@intrast.com.eg |
+| Mohamed Tarek Mohamed Abd El Aleem | mo.tar8010147@intrast.com.eg |
+| Abanoup Alkees Bishoy | ab.bas3010513@intrast.com.eg |
+| Sohip Ali | so.ali2010061@intrast.com.eg |
