@@ -20,7 +20,7 @@ jobs:
         working-directory: ./app
         
     services:
-      postgres:
+      postgres: # this service is used for integration tests that require a PostgreSQL database, it is NOT part of the production deployment.
         image: postgres:15
         env:
           POSTGRES_USER: postgres

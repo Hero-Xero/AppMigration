@@ -14,11 +14,11 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   eks_managed_node_groups = {
-    default = {
+    app_nodes = { 
       instance_types = ["t3.small"]
       min_size     = 2
-      max_size     = 2
-      desired_size = 2
+      max_size     = 4
+      desired_size = 3
       vpc_security_group_ids = [aws_security_group.eks_nodes.id]
     }
   }

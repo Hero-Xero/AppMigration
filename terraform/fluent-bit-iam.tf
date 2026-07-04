@@ -19,5 +19,5 @@ resource "aws_iam_policy" "fluent_bit_cloudwatch" {
 
 resource "aws_iam_role_policy_attachment" "fluent_bit_attachment" {
   policy_arn = aws_iam_policy.fluent_bit_cloudwatch.arn
-  role       = module.eks.eks_managed_node_groups["default"].iam_role_name
+  role       = module.eks.eks_managed_node_groups["app_nodes"].iam_role_name
 }

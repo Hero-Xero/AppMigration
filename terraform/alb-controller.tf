@@ -40,3 +40,25 @@ resource "helm_release" "aws_load_balancer_controller" {
     value = module.load_balancer_controller_irsa_role.iam_role_arn
   }
 }
+
+
+# this patches missing permissions for newer versions of the Load Balancer Controller
+resource "aws_iam_role_policy" "lbc_patch" {
+  name = "lbc-permission-patch"
+  # and this targets the role already created via the module
+  role = module.load_balancer_controller_irsa_role.iam_role_name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "elasticloadbalancing:DescribeListenerAttributes",
+          "elasticloadbalancing:DescribeCapacityReservation"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
