@@ -2,7 +2,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.0"
   cluster_name    = "app-migration"
-  cluster_version = "1.31"
+  cluster_version = "1.36"
 
   vpc_id = aws_vpc.main.id
 
@@ -12,6 +12,7 @@ module "eks" {
   ]
 
   cluster_endpoint_public_access = true
+  enable_cluster_creator_admin_permissions = true
 
   eks_managed_node_groups = {
     app_nodes = { 
