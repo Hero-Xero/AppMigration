@@ -55,7 +55,8 @@ resource "aws_iam_role_policy" "lbc_patch" {
         Effect = "Allow"
         Action = [
           "elasticloadbalancing:DescribeListenerAttributes",
-          "elasticloadbalancing:DescribeCapacityReservation"
+          "elasticloadbalancing:DescribeCapacityReservation",
+          "ec2:DescribeRouteTables"
         ]
         Resource = "*"
       }
