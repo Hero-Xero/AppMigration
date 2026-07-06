@@ -27,7 +27,7 @@ output "ecr_repository_url" {
 
 output "grafana_url" {
   # changed from kubernetes_service_v1 to kubernetes_ingress_v1
-  value       = "http://${data.kubernetes_ingress_v1.grafana.status[0].load_balancer[0].ingress[0].hostname}"
+  value       = try("http://${data.kubernetes_ingress_v1.grafana.status[0].load_balancer[0].ingress[0].hostname}", "Unavailable during teardown")
   description = "Grafana public URL"
 }
 
