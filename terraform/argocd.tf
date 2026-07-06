@@ -9,19 +9,33 @@ resource "kubernetes_namespace_v1" "argocd" {
 
 # this installs ArgoCD from the official Helm Chart
 resource "helm_release" "argocd" {
-
   depends_on = [helm_release.aws_load_balancer_controller]  
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
   version    = "7.3.1" 
-  namespace  = kubernetes_namespace_v1.argocd.metadata[0].name   # this reference points to the new v1 resource block
+  namespace  = kubernetes_namespace_v1.argocd.metadata[0].name 
 
-
-  set {
-    name  = "server.insecure"
-    value = "true"
-  }
+  values = [
+    yamlencode({
+      server = {
+        insecure = true 
+        
+        ingress = {
+          enabled          = true
+          ingressClassName = "alb"
+          annotations = {
+            "alb.ingress.kubernetes.io/scheme"           = "internet-facing"
+            "alb.ingress.kubernetes.io/target-type"      = "ip"
+            "alb.ingress.kubernetes.io/backend-protocol" = "HTTP"
+            "alb.ingress.kubernetes.io/listen-ports"     = "[{\"HTTP\": 80}]"
+            "alb.ingress.kubernetes.io/success-codes"    = "200,307"
+          }
+          paths = ["/"]
+        }
+      }
+    })
+  ]
 }
 
 # because terraform applies resources in parallel, it won't know waht an application is until Helm Chart is fully installed.
@@ -47,5 +61,13 @@ data "kubernetes_secret_v1" "argocd_password" {
     namespace = kubernetes_namespace_v1.argocd.metadata[0].name
   }
   
+  depends_on = [helm_release.argocd]
+}
+
+data "kubernetes_ingress_v1" "argocd" {
+  metadata {
+    name      = "argocd-server"
+    namespace = kubernetes_namespace_v1.argocd.metadata[0].name
+  }
   depends_on = [helm_release.argocd]
 }
