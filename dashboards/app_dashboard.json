@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 28,
   "links": [],
   "panels": [
     {
@@ -486,7 +485,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(jvm_memory_used_bytes{area=\"heap\"})",
+          "expr": "sum(jvm_memory_used_bytes)",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -504,8 +503,8 @@
     "list": []
   },
   "time": {
-    "from": "2026-07-06T07:00:43.884Z",
-    "to": "2026-07-06T07:30:43.884Z"
+    "from": "now-15m",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",

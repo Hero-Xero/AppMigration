@@ -3,6 +3,8 @@ resource "kubernetes_namespace_v1" "argocd" {
   metadata {
     name = "argocd"
   }
+
+  depends_on = [module.eks]
 }
 
 # this installs ArgoCD from the official Helm Chart
@@ -35,4 +37,15 @@ resource "null_resource" "bootstrap_argocd" {
       kubectl apply -f ../argocd-app.yaml
     EOT
   }
+}
+
+
+# Fetch the auto-generated password secret from Kubernetes
+data "kubernetes_secret_v1" "argocd_password" {
+  metadata {
+    name      = "argocd-initial-admin-secret"
+    namespace = kubernetes_namespace_v1.argocd.metadata[0].name
+  }
+  
+  depends_on = [helm_release.argocd]
 }

@@ -36,3 +36,11 @@ output "grafana_password" {
   description = "Grafana admin password"
   sensitive   = true
 }
+
+output "argocd_password" {
+  # Terraform automatically base64-decodes the secret data for you
+  # yes not secure to output the password, but for our usecase it simplifies the process of logging into ArgoCD
+  value       = try(data.kubernetes_secret_v1.argocd_password.data["password"], "Unavailable during teardown")
+  description = "ArgoCD initial admin password"
+  sensitive   = true
+}
