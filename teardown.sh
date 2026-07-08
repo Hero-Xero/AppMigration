@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e
+
+# THE NUKE: Disables AWS CLI pagination globally for this script only. 
+# It will not leak into your host terminal.
+export AWS_PAGER=""
+
 echo "Starting Optimized Teardown..."
 
 REGION="us-east-1"
@@ -48,7 +53,7 @@ sweep_vpc_dependencies() {
       aws ec2 revoke-security-group-ingress --region "$REGION" --group-id "$SG" --ip-permissions "$(aws ec2 describe-security-groups --region "$REGION" --group-ids "$SG" --query 'SecurityGroups[0].IpPermissions' --output json)" 2>/dev/null || true
       aws ec2 revoke-security-group-egress --region "$REGION" --group-id "$SG" --ip-permissions "$(aws ec2 describe-security-groups --region "$REGION" --group-ids "$SG" --query 'SecurityGroups[0].IpPermissionsEgress' --output json)" 2>/dev/null || true
 
-      # Strip rules in OTHER SGs that reference this SG (the actual gap)
+      # Strip rules in OTHER SGs that reference this SG
       REF_SGS=$(aws ec2 describe-security-groups --region "$REGION" \
         --filters "Name=vpc-id,Values=$VPC_ID" "Name=ip-permission.group-id,Values=$SG" \
         --query 'SecurityGroups[].GroupId' --output text 2>/dev/null || echo "")

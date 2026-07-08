@@ -99,11 +99,3 @@ data "kubernetes_secret_v1" "argocd_password" {
   
   depends_on = [helm_release.argocd]
 }
-
-data "kubernetes_ingress_v1" "argocd" {
-  metadata {
-    name      = "argocd-server-custom"
-    namespace = kubernetes_namespace_v1.argocd.metadata[0].name
-  }
-  depends_on = [kubernetes_ingress_v1.argocd_custom]
-}

@@ -46,6 +46,6 @@ output "argocd_password" {
 }
 
 output "argocd_url" {
-  value       = try("http://${data.kubernetes_ingress_v1.argocd.status[0].load_balancer[0].ingress[0].hostname}", "Unavailable during teardown")
+  value       = "http://${kubernetes_ingress_v1.argocd_custom.status[0].load_balancer[0].ingress[0].hostname}"
   description = "ArgoCD public URL"
 }
