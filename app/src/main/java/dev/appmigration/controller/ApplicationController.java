@@ -30,6 +30,12 @@ public class ApplicationController {
         return applicationRepository.findAll();
     }
 
+    @PostMapping("/find-or-create")
+    public Application findOrCreateApplication(@RequestBody Application application) {
+    return applicationRepository.findByName(application.getName())
+        .orElseGet(() -> applicationRepository.save(application));
+    }
+
     @PostMapping
     public Application createApplication(@RequestBody Application application) {
         return applicationRepository.save(application);

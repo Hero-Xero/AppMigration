@@ -106,3 +106,46 @@ jobs:
             git commit -m "CI: update deployment image to $IMAGE_TAG"
             git push origin main
           fi
+
+      - name: Record deployment in audit API
+        if: success()
+        env:
+          APP_URL: ${{ secrets.APP_MIGRATION_API_URL }}
+        run: |
+          set -e
+
+          APP_ID=$(curl -sf -X POST "$APP_URL/api/applications/find-or-create" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "AppMigration",
+              "description": "Cloud-native deployment auditing service",
+              "gitRepoUrl": "https://github.com/${{ github.repository }}"
+            }' | jq -r '.id')
+
+          if [ -z "$APP_ID" ] || [ "$APP_ID" == "null" ]; then
+            echo "Failed to get application ID, skipping audit record."
+            exit 0
+          fi
+
+          DEPLOYMENT_ID=$(curl -sf -X POST "$APP_URL/api/applications/$APP_ID/deployments" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"imageTag\": \"${{ github.sha }}\",
+              \"status\": \"Healthy\"
+            }" | jq -r '.id')
+
+          if [ -z "$DEPLOYMENT_ID" ] || [ "$DEPLOYMENT_ID" == "null" ]; then
+            echo "Failed to get deployment ID, skipping pipeline run record."
+            exit 0
+          fi
+
+          curl -sf -X POST "$APP_URL/api/deployments/$DEPLOYMENT_ID/pipeline-runs" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"commitSha\": \"${{ github.sha }}\",
+              \"branch\": \"${{ github.ref_name }}\",
+              \"triggeredBy\": \"github-actions\",
+              \"outcome\": \"SUCCESS\"
+            }"
+
+          echo "Audit trail recorded for deployment $DEPLOYMENT_ID"

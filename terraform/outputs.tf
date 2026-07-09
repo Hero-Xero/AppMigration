@@ -49,3 +49,9 @@ output "argocd_url" {
   value       = "http://${data.kubernetes_ingress_v1.argocd_url_fetcher.status[0].load_balancer[0].ingress[0].hostname}"
   description = "ArgoCD public URL"
 }
+
+output "app_url" {
+  value       = try("http://${data.kubernetes_ingress_v1.app_migration.status[0].load_balancer[0].ingress[0].hostname}", "Unavailable")
+  description = "AppMigration API public URL"
+  depends_on  = [time_sleep.wait_for_app_alb]
+}
