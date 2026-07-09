@@ -19,6 +19,27 @@ resource "helm_release" "prometheus" {
       grafana = {
         adminPassword = random_password.grafana_password.result
 
+         additionalDataSources = [
+          {
+            name     = "postgres"          # matches the dashboard JSON's datasource.uid reference pattern loosely, but uid is what actually matters
+            type     = "postgres"
+            uid      = "postgres"           # MUST exactly match every "uid": "postgres" reference in the dashboard JSON above
+            url      = aws_db_instance.postgres.address
+            port     = 5432
+            database = aws_db_instance.postgres.db_name
+            user     = aws_db_instance.postgres.username
+
+            secureJsonData = {
+              password = random_password.db_password.result
+            }
+
+            jsonData = {
+              sslmode         = "require"
+              postgresVersion = 1600
+            }
+          }
+        ]
+
         service = {
           type = "ClusterIP"
         }
