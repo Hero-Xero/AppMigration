@@ -108,7 +108,7 @@ resource "helm_release" "prometheus" {
                   labels = { severity = "critical" }
                   annotations = {
                     summary = "AppMigration service is down"
-                  }
+                  } 
                 }
               ]
             }
